@@ -1,8 +1,8 @@
 import React from "react"
-import "./Styles/GameBox.css"
+import Styles from"./Styles/GameBox.module.css"
 
 const GameBox = ()=>{
-    return (<div className="GameBox">asdf</div>)
+    return (<div className={Styles.GameBox}></div>)
 }
 
 export default GameBox;
