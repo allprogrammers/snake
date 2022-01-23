@@ -2,7 +2,7 @@ import React from "react"
 import "./Styles/GameBox.css"
 
 const GameBox = ()=>{
-    return (<div className="parentGameBox"><div className="GameBox">asdf</div></div>)
+    return (<div className="GameBox">asdf</div>)
 }
 
 export default GameBox;
