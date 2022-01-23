@@ -1,0 +1,6 @@
+.GameBox {
+    height: 80vh;
+    width: 80vw;
+    margin: 10vh 10vw 10vh 10vw;
+    background: green;
+}
