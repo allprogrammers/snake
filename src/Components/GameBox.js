@@ -1,23 +1,34 @@
-import React, { useEffect, useState } from "react"
-import Cell from "./Cell"
+import React, { useEffect, useState } from 'react'
+import GContainer from './GContainer';
 
-import Styles from"./Styles/GameBox.module.css"
+import Styles from './Styles/GameBox.module.css'
 
-import { calculateNextStep,width,height,delayConst } from "../helpers";
+import { calculateNextStep,width,height,delayConst } from '../helpers';
 
 
 const GameBox = ()=>{
     //10x10 grid
-    const [snake,setSnake] = useState([[0,0],[1,0]])
-    const [board,setBoard] = useState([...Array(height)].map((row,rowi)=> [...Array(width)].map((col,coli)=>0)))
+    const [snake,setSnake] = useState([[0,0],[1,0],[2,0]])
+    const [board,setBoard] = useState([...Array(height)].map((col,coli)=> [...Array(width)].map((row,rowi)=>0)))
     const [dir,setDir] = useState([1,0])
+    const [food,setFood] = useState()
+
+    useEffect(()=>{
+        setBoard(
+            [...Array(height)].map((col,coli)=> 
+                [...Array(width)].map((row,rowi)=>
+                    snake.filter(pos => (pos[0]===rowi && pos[1]===coli)).length===0?0:1)
+                )
+            )
+
+    },[snake])
 
     useEffect(()=>{
         const keyToDir = {
-            "ArrowUp":[0,-1],
-            "ArrowDown":[0,1],
-            "ArrowLeft":[-1,0],
-            "ArrowRight":[1,0]
+            'ArrowUp':[0,-1],
+            'ArrowDown':[0,1],
+            'ArrowLeft':[-1,0],
+            'ArrowRight':[1,0]
         }
         const keyDownHandler = (e) => {
             if(Object.keys(keyToDir).filter(x=>x==e.key).length===0)
@@ -46,10 +57,10 @@ const GameBox = ()=>{
     useEffect(()=>{
         const intervalID = setInterval(() => {
             setSnake((oldSnake) => {
-                var last = oldSnake[oldSnake.length-1];
-                var nextStep = calculateNextStep(last,dir);
+                const last = oldSnake[oldSnake.length-1];
+                const nextStep = calculateNextStep(last,dir);
                 
-                var newSnake = [...oldSnake]
+                const newSnake = [...oldSnake]
                 newSnake.push(nextStep);
                 newSnake.shift();
                 return newSnake;
@@ -58,24 +69,14 @@ const GameBox = ()=>{
         return ()=>{clearInterval(intervalID)}
     },[dir])
 
-    useEffect(()=>{
-        setBoard(
-            [...Array(height)].map((col,coli)=> 
-                [...Array(width)].map((row,rowi)=>
-                    snake.filter(pos => (pos[0]===rowi && pos[1]===coli)).length===0?0:1)
-                )
-            )
-
-    },[snake])
-
     return (
-    <div className={Styles.GameBox}>
-        {[...Array(height)].map((x,row)=>
+        <div className={Styles.GameBox}>
+        {[...Array(height)].map((x,col)=>
         (
-            <div key={row} className={Styles.GameBoxColumn}>
-                {[...Array(width)].map((y,col)=> 
+            <div key={col} className={Styles.GameBoxColumn}>
+                {[...Array(width)].map((y,row)=> 
                 (
-                    <Cell rown={row} coln={col} activated={board[row][col]}key={col}/>
+                    <GContainer contentType={board[col][row]} key={row*width+col}/>
                 ))}
             </div>
         ))}
