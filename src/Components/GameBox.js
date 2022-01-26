@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react"
-
 import Cell from "./Cell"
 
 import Styles from"./Styles/GameBox.module.css"
 
-const width = 10;
-const height = 10;
-const delayConst = 500;
-
-function mod(a,b){
-    return ((a%b)+b)%b;
-}
+import { calculateNextStep,width,height,delayConst } from "../helpers";
 
 
 const GameBox = ()=>{
@@ -34,7 +27,7 @@ const GameBox = ()=>{
             
             const dirToSet = keyToDir[e.key]
             const lastHead = snake[snake.length-1]
-            const nextHead = [mod(lastHead[0]+dirToSet[0],width),mod(lastHead[1]+dirToSet[1],height)]
+            const nextHead = calculateNextStep(lastHead,dirToSet)
 
             const matchingPartOfSnake = snake.filter(x=>x[0]===nextHead[0] && x[1]===nextHead[1])
 
@@ -54,7 +47,7 @@ const GameBox = ()=>{
         const intervalID = setInterval(() => {
             setSnake((oldSnake) => {
                 var last = oldSnake[oldSnake.length-1];
-                var nextStep = [mod((last[0]+dir[0]),width),mod((last[1]+dir[1]),height)];
+                var nextStep = calculateNextStep(last,dir);
                 
                 var newSnake = [...oldSnake]
                 newSnake.push(nextStep);
