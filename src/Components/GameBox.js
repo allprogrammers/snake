@@ -6,48 +6,74 @@ import Styles from"./Styles/GameBox.module.css"
 
 const width = 10;
 const height = 10;
+const delayConst = 500;
+
+function mod(a,b){
+    return ((a%b)+b)%b;
+}
+
 
 const GameBox = ()=>{
     //10x10 grid
-    const [snake,setSnake] = useState([[0,0]])
+    const [snake,setSnake] = useState([[0,0],[1,0]])
     const [board,setBoard] = useState([...Array(height)].map((row,rowi)=> [...Array(width)].map((col,coli)=>0)))
-    const [xdir,setxdir] = useState(1)
-    const [ydir,setydir] = useState(0)
+    const [dir,setDir] = useState([1,0])
+
+    useEffect(()=>{
+        const keyToDir = {
+            "ArrowUp":[0,-1],
+            "ArrowDown":[0,1],
+            "ArrowLeft":[-1,0],
+            "ArrowRight":[1,0]
+        }
+        const keyDownHandler = (e) => {
+            if(Object.keys(keyToDir).filter(x=>x==e.key).length===0)
+            {
+                return
+            }
+            
+            const dirToSet = keyToDir[e.key]
+            const lastHead = snake[snake.length-1]
+            const nextHead = [mod(lastHead[0]+dirToSet[0],width),mod(lastHead[1]+dirToSet[1],height)]
+
+            const matchingPartOfSnake = snake.filter(x=>x[0]===nextHead[0] && x[1]===nextHead[1])
+
+            setDir((oldDir)=>{
+                if(matchingPartOfSnake.length===0)
+                {
+                    return dirToSet
+                }
+                return oldDir
+            })
+        }
+        window.addEventListener('keydown',keyDownHandler,false);
+        return ()=>{window.removeEventListener('keydown',keyDownHandler,false)}
+    },[snake])
 
     useEffect(()=>{
         const intervalID = setInterval(() => {
             setSnake((oldSnake) => {
                 var last = oldSnake[oldSnake.length-1];
-                var nextStep = [last[0]+ydir,last[1]+xdir];
+                var nextStep = [mod((last[0]+dir[0]),width),mod((last[1]+dir[1]),height)];
+                
                 var newSnake = [...oldSnake]
                 newSnake.push(nextStep);
                 newSnake.shift();
                 return newSnake;
             })
-        }, 500);
+        }, delayConst);
         return ()=>{clearInterval(intervalID)}
-    },[])
+    },[dir])
 
     useEffect(()=>{
         setBoard(
-            [...Array(height)].map((row,rowi)=> 
-                [...Array(width)].map((col,coli)=>
+            [...Array(height)].map((col,coli)=> 
+                [...Array(width)].map((row,rowi)=>
                     snake.filter(pos => (pos[0]===rowi && pos[1]===coli)).length===0?0:1)
                 )
             )
 
     },[snake])
-
-    const handleClick= (row,col)=>{
-        setBoard(board.map((x,i)=> {
-            if(i==row)
-            {
-                x[col]=x[col]?0:1;
-            }
-            return x;
-        }));
-    }
-
 
     return (
     <div className={Styles.GameBox}>
@@ -56,7 +82,7 @@ const GameBox = ()=>{
             <div key={row} className={Styles.GameBoxColumn}>
                 {[...Array(width)].map((y,col)=> 
                 (
-                    <Cell onClick={function(){handleClick(row,col)}} rown={row} coln={col} activated={board[row][col]}key={col}/>
+                    <Cell rown={row} coln={col} activated={board[row][col]}key={col}/>
                 ))}
             </div>
         ))}
