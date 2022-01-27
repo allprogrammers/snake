@@ -26,10 +26,11 @@ const GameBoxContainer = ()=>{
     useEffect(()=>{
         if(!GBHelpers.snakeAteFood(snake,food)){return}
 
-        setFood(GBHelpers.newFoodLocation(board,width,height))
         const snakeHead = snake[snake.length-1]
         const snakeSecondLast = snake[snake.length-2]
         const remaingSnake = snake.slice(0,snake.length-2)
+
+        setFood(GBHelpers.newFoodLocation(board,width,height))
         setSnake([...remaingSnake,snakeSecondLast,snakeSecondLast,snakeHead])
 
     },[snake])
@@ -37,7 +38,7 @@ const GameBoxContainer = ()=>{
     useEffect(()=>{
         if(!GBHelpers.snakeAteSelf(snake)){return}
         
-        setDirection([0,0])
+        setGameOver(1)
 
     },[snake])
 
@@ -66,11 +67,6 @@ const GameBoxContainer = ()=>{
     },[snake])
 
     useEffect(()=>{
-        
-        if(direction[0]===0 && direction[1]===0)
-        {
-            setGameOver(1)
-        }
         const intervalID = setInterval(() => {
             setSnake((oldSnake) => {
                 const last = oldSnake[oldSnake.length-1];
