@@ -15,6 +15,8 @@ const GContainer = (props) => {
         ComponentToReturn = <Snake />
     }else if (props.contentType===2){
         ComponentToReturn = <Food />
+    }else if (props.contentType==3){
+        ComponentToReturn = "Game Over"
     }
     return <div className={Styles.GContainer}>{ComponentToReturn}</div>
 }
