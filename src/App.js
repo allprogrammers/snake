@@ -1,10 +1,10 @@
 import './App.css';
-import GameBox from "./Components/GameBox";
+import GameBoxContainer from "./Components/GameBoxContainer";
 import React from 'react';
 
 function App() {
   return (
-      <GameBox />
+      <GameBoxContainer />
   );
 }
 
