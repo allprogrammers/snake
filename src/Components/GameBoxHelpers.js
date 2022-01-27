@@ -36,6 +36,15 @@ export function snakeAteSelf(snake){
     return bite.length!==0
 }
 
+export function goingBack(snake,directionToSet)
+{
+    const lastHead = snake[snake.length-1]
+    const secondLastHead = snake[snake.length-2]
+    const nextHead = calculateNextStep(lastHead,directionToSet)
+
+    return secondLastHead[0]===nextHead[0] && secondLastHead[1]===nextHead[1]
+}
+
 export function newFoodLocation(board,width,height)
 {
     let newFood;

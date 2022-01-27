@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from "react";
 import GameBox from "./GameBox";
 
-import * as GBCHelpers from "./GameBoxContainerHelpers"
+import * as GBHelpers from "./GameBoxHelpers"
 
 import { calculateNextStep,width,height,delayConst} from '../generalHelpers';
 
@@ -14,31 +14,31 @@ const GameBoxContainer = ()=>{
 
 
     useEffect(()=>{
-        let newBoard = GBCHelpers.generateNewBoard(width,height);
+        let newBoard = GBHelpers.generateNewBoard(width,height);
 
-        newBoard = GBCHelpers.placeSnakeOnBoard(newBoard,snake);
-        newBoard = GBCHelpers.placeFoodOnBoard(newBoard,food);
+        newBoard = GBHelpers.placeSnakeOnBoard(newBoard,snake);
+        newBoard = GBHelpers.placeFoodOnBoard(newBoard,food);
         
         setBoard(newBoard)
         
     },[snake])
 
     useEffect(()=>{
-        if(GBCHelpers.snakeAteFood(snake,food))
-        {
-            setFood(GBCHelpers.newFoodLocation(board,width,height))
-            const snakeHead = snake[snake.length-1]
-            const snakeSecondLast = snake[snake.length-2]
-            const remaingSnake = snake.slice(0,snake.length-2)
-            setSnake([...remaingSnake,snakeSecondLast,snakeSecondLast,snakeHead])
-        }
+        if(!GBHelpers.snakeAteFood(snake,food)){return}
+
+        setFood(GBHelpers.newFoodLocation(board,width,height))
+        const snakeHead = snake[snake.length-1]
+        const snakeSecondLast = snake[snake.length-2]
+        const remaingSnake = snake.slice(0,snake.length-2)
+        setSnake([...remaingSnake,snakeSecondLast,snakeSecondLast,snakeHead])
+
     },[snake])
 
     useEffect(()=>{
-        if(GBCHelpers.snakeAteSelf(snake))
-        {
-            setDirection([0,0])
-        }
+        if(!GBHelpers.snakeAteSelf(snake)){return}
+        
+        setDirection([0,0])
+
     },[snake])
 
     useEffect(()=>{
@@ -50,23 +50,15 @@ const GameBoxContainer = ()=>{
         keys.forEach((key,i)=>keyToDirection[key]=directions[i])
 
         const keyDownHandler = (e) => {
-            if(!GBCHelpers.pressedGoodKey(keys,e.key))
+            if(!GBHelpers.pressedGoodKey(keys,e.key))
             {
                 return
             }
             const directionToSet = keyToDirection[e.key]
-            const lastHead = snake[snake.length-1]
-            const secondLastHead = snake[snake.length-2]
-            const nextHead = calculateNextStep(lastHead,directionToSet)
 
-            if(secondLastHead[0]===nextHead[0] && secondLastHead[1]===nextHead[1])
-            {
-                return
-            }
+            if(GBHelpers.goingBack(snake,directionToSet)){return}
             
-            setDirection((oldDirection)=>{
-                return directionToSet
-            })
+            setDirection(directionToSet)
         }
         window.addEventListener('keydown',keyDownHandler,false);
 
