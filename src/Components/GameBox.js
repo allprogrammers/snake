@@ -7,7 +7,6 @@ import { calculateNextStep,width,height,delayConst } from '../helpers';
 
 
 const GameBox = ()=>{
-    //10x10 grid
     const [snake,setSnake] = useState([[0,0],[1,0],[2,0]])
     const [board,setBoard] = useState([...Array(height)].map((col,coli)=> [...Array(width)].map((row,rowi)=>0)))
     const [dir,setDir] = useState([1,0])
@@ -15,9 +14,9 @@ const GameBox = ()=>{
 
     useEffect(()=>{
         setBoard(
-            [...Array(height)].map((col,coli)=> 
-                [...Array(width)].map((row,rowi)=>
-                    snake.filter(pos => (pos[0]===rowi && pos[1]===coli)).length===0?0:1)
+            [...Array(height)].map((row,rowi)=> 
+                [...Array(width)].map((col,coli)=>
+                    snake.filter(pos => (pos[0]===coli && pos[1]===rowi)).length===0?0:1)
                 )
             )
 
@@ -71,12 +70,12 @@ const GameBox = ()=>{
 
     return (
         <div className={Styles.GameBox}>
-        {[...Array(height)].map((x,col)=>
+        {[...Array(height)].map((x,row)=>
         (
-            <div key={col} className={Styles.GameBoxColumn}>
-                {[...Array(width)].map((y,row)=> 
+            <div key={row} className={Styles.GameBoxColumn}>
+                {[...Array(width)].map((y,col)=> 
                 (
-                    <GContainer contentType={board[col][row]} key={row*width+col}/>
+                    <GContainer contentType={board[row][col]} key={col}/>
                 ))}
             </div>
         ))}
